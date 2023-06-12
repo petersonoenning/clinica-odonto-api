@@ -7,7 +7,7 @@ export class PacienteController {
 
     const pacientes = await AppDataSource.manager.find(Paciente)
 
-    res.status(200).json({ dados: pacientes });
+    res.status(200).json({ dados: pacientes, total:pacientes.length });
   }
 
   public async create(req: Request, res: Response) {
@@ -26,5 +26,60 @@ export class PacienteController {
     const _paciente = await AppDataSource.manager.save(pac);
 
     res.status(201).json(_paciente);
+  }
+  public async update(req: Request, res: Response){
+  
+    const { codigo } = req.params;
+    // const cod = req.params.codigo;
+
+    // return res.json({ update: true , codigo_enviado: codigo});
+
+    const paciente = await AppDataSource.manager.findOneBy(Paciente, { id: codigo });
+
+    if(paciente == null) {
+      return res.status(404).json({ erro: 'Paciente não encontrada!' });
+    }
+
+    let {nome, cpf, data_nascimento, sexo, endereco, celular, email} = req.body;
+    paciente.nome = nome;
+    paciente.cpf = cpf;
+    paciente.data_nascimento = data_nascimento;
+    paciente.sexo = sexo;
+    paciente.endereco = endereco;
+    paciente.celular = celular;
+    paciente.email = email;
+
+    const _paciente = await AppDataSource.manager.save(paciente);
+
+    return res.json(_paciente);
+  }
+
+  public async destroy(req: Request, res: Response){
+  
+    
+    const { codigo } = req.params;
+
+    const paciente = await AppDataSource.manager.findOneBy(Paciente, { id: codigo });
+
+    if(paciente == null) {
+      return res.status(404).json({ erro: 'Paciente não encontrada!' });
+    }
+
+    await AppDataSource.manager.delete(Paciente, paciente);
+
+    return res.status(204).json();
+  }
+
+  public async show(req: Request, res: Response){
+  
+    
+    const { codigo } = req.params;
+
+    const paciente = await AppDataSource.manager.findOneBy(Paciente, { id: codigo });
+
+    if(paciente == null) {
+      return res.status(404).json({ erro: 'Paciente não encontrada!' });
+    }
+    return res.json(paciente);
   }
 }
