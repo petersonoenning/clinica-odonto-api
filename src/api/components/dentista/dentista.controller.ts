@@ -7,7 +7,7 @@ export class DentistaController {
 
     const dentista =  await AppDataSource.manager.find(Dentista)
 
-    res.status(200).json({ dados: dentista });
+    res.status(200).json({ dados: dentista, total: dentista.length });
   }
 
   public async create(req: Request, res: Response) {
@@ -31,4 +31,62 @@ export class DentistaController {
 
     res.status(201).json({dentista_salvo});
   }
+
+
+  //
+  public async update(req: Request, res: Response){
+  
+    const { codigo } = req.params;
+    
+
+    const dentista = await AppDataSource.manager.findOneBy(Dentista, { id: codigo });
+
+    if(dentista == null) {
+      return res.status(404).json({ erro: 'Dentista não encontrado!' });
+    }
+
+    let { cpf, nome, numero_registro, especialidade, celular} = req.body;
+
+    dentista.cpf = cpf;
+    dentista.nome = nome;
+    dentista.numero_registro = numero_registro;
+    dentista.especialidade = especialidade;
+    dentista.celular = celular;
+
+    const dentista_salvo = await AppDataSource.manager.save(dentista);
+
+    return res.json(dentista_salvo);
+  }
+
+  public async destroy(req: Request, res: Response){
+  
+    
+    const { codigo } = req.params;
+
+    const dentista = await AppDataSource.manager.findOneBy(Dentista, { id: codigo });
+
+    if(dentista == null) {
+      return res.status(404).json({ erro: 'Dentista não encontrado!' });
+    }
+
+    await AppDataSource.manager.delete(Dentista, dentista);
+
+    return res.status(204).json();
+  }
+
+  public async show(req: Request, res: Response){
+  
+    
+    const { codigo } = req.params;
+
+    const dentista = await AppDataSource.manager.findOneBy(Dentista, { id: codigo });
+
+    if(dentista == null) {
+      return res.status(404).json({ erro: 'Dentista não encontrado!' });
+    }
+
+    return res.json(dentista);
+  }
 }
+
+

@@ -6,8 +6,8 @@ export class PacienteController {
   public async list(req: Request, res: Response) {
 
     const pacientes = await AppDataSource.manager.find(Paciente)
-
     res.status(200).json({ dados: pacientes, total:pacientes.length });
+
   }
 
   public async create(req: Request, res: Response) {
