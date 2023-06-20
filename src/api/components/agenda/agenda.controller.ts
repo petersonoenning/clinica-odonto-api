@@ -1,3 +1,4 @@
+import { validate } from 'class-validator';
 import { Request, Response } from 'express';
 import { AppDataSource } from '../../../config/database/mysql-datasource.config';
 import { Agenda } from './agenda.entity';
@@ -26,6 +27,12 @@ export class AgendaController {
     agd.dentista_id = dentista_id;
     agd.paciente_id = paciente_id;
 
+
+    const erros = await validate(agd);
+
+    if(erros.length > 0) {
+      return res.status(400).json(erros);
+    }
     const agenda_salva = await AppDataSource.manager.save(agd);
 
     res.status(201).json({agenda_salva});
@@ -35,7 +42,7 @@ export class AgendaController {
   public async update(req: Request, res: Response) {
     const { cod } = req.params;
   
-    const agenda = await AppDataSource.manager.findOneBy(Agenda, { id: cod });
+    const agenda = await AppDataSource.manager.findOneBy(Agenda, { id: parseInt(cod) });
   
     if (agenda == null) {
       return res.status(404).json({ erro: 'Agenda não encontrada!' });
@@ -49,6 +56,15 @@ export class AgendaController {
     agenda.dentista_id = dentista_id;
     agenda.paciente_id = paciente_id;
   
+
+
+    const erros = await validate(agenda);
+
+    if(erros.length > 0) {
+      return res.status(400).json(erros);
+    }
+
+
     const agenda_salvo = await AppDataSource.manager.save(agenda);
   
     return res.json(agenda_salvo);
@@ -60,7 +76,7 @@ export class AgendaController {
     
     const cod = req.params.cod;
 
-    const agenda = await AppDataSource.manager.findOneBy(Agenda, { id: cod });
+    const agenda = await AppDataSource.manager.findOneBy(Agenda, { id: parseInt(cod) });
 
     if(agenda == null) {
       return res.status(404).json({ erro: 'Agenda não encontrada!' });
@@ -77,7 +93,7 @@ export class AgendaController {
     
     const cod = req.params.cod;
 
-    const agenda = await AppDataSource.manager.findOneBy(Agenda, { id: cod });
+    const agenda = await AppDataSource.manager.findOneBy(Agenda, { id: parseInt(cod) });
 
     if(agenda == null) {
       return res.status(404).json({ erro: 'Agenda não encontrada!' });

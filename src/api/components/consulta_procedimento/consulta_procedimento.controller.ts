@@ -1,91 +1,139 @@
 import { Request, Response } from 'express';
 import { AppDataSource } from '../../../config/database/mysql-datasource.config';
 import { ConsultaProcedimento } from './consulta_procedimento.entity';
+import { validate } from 'class-validator';
+import { Consulta} from '../consulta/consulta.entity';
+import { Procedimento} from '../procedimento/procedimento.entity';
 
 export class ConsultaProcedimentoController {
   public async list(req: Request, res: Response) {
 
     const consultaProcedimento =  await AppDataSource.manager.find(ConsultaProcedimento)
 
-    res.status(200).json({ dados: consultaProcedimento, total: consultaProcedimento.length});
+    res.status(200).json({ dados: consultaProcedimento, total: consultaProcedimento.length });
   }
 
   public async create(req: Request, res: Response) {
 
-    let consulta_id = req.body.consulta_id;
-    let procedimento_id = req.body.procedimento_id;
-    let dente = req.body.dente;
-    let quantidade = req.body.quantidade;
-    let valor = req.body.valor;
+    let { consulta, procedimento, dente, quantidade, valor } = req.body;
+    
+    if(consulta == undefined) {
+      return res.status(404).json({ erro: 'Consulta inexistente'})
+    }
+
+    const _consulta = await AppDataSource.manager.findOneBy(Consulta, { id: consulta });
+
+    if(_consulta == null) {
+      return res.status(404).json({ erro: 'Consulta inexistente'})
+    }
+
+    if(procedimento == undefined) {
+      return res.status(404).json({ erro: 'Procedimento inexistente'})
+    }
+
+    const _procedimento = await AppDataSource.manager.findOneBy(Procedimento, { id: procedimento });
+
+    if(_procedimento == null) {
+      return res.status(404).json({ erro: 'Procedimento inexistente'})
+    }
 
     let cp = new ConsultaProcedimento();
-    cp.consulta_id = consulta_id;
-    cp.procedimento_id = procedimento_id;
+    cp.consulta = _consulta;
+    cp.procedimento = _procedimento;
     cp.dente = dente;
     cp.quantidade = quantidade;
     cp.valor = valor;
+
+    const erros = await validate(cp);
+
+    if(erros.length > 0) {
+      return res.status(400).json(erros);
+    }
 
     const consultaProcedimento_salva = await AppDataSource.manager.save(cp);
 
     res.status(201).json({consultaProcedimento_salva});
   }
 
-
-
-  public async update(req: Request, res: Response) {
-
-    // const cod = req.params.cod;
+  public async update(req: Request, res: Response){
+  
     const { cod } = req.params;
+    // const cod = req.params.codigo;
 
-    const consulta_procedimento = await AppDataSource.manager.findOneBy(ConsultaProcedimento, { id: cod });
+    // return res.json({ update: true , codigo_enviado: codigo});
 
-    if (consulta_procedimento == null) {
-      return res.status(404).json({ erro: 'Consulta_Procedimento não encontrada!' });
+    const consultaProcedimento = await AppDataSource.manager.findOneBy(ConsultaProcedimento, { id: parseInt(cod) });
+
+    if(consultaProcedimento == null) {
+      return res.status(404).json({ erro: 'Consulta Procedimento não encontrado!' });
     }
 
-    let { consulta_id, procedimento_id, dente, quantidade, valor } = req.body;
+    let { consulta, procedimento, dente, quantidade, valor } = req.body;
 
-    consulta_procedimento.consulta_id = consulta_id;
-    consulta_procedimento.procedimento_id = procedimento_id;
-    consulta_procedimento.dente = dente;
-    consulta_procedimento.quantidade = quantidade;
-    consulta_procedimento.valor = valor;
+    if(consulta.id == undefined) {
+      return res.status(404).json({ erro: 'Consulta inexistente'})
+    }
 
+    const _consulta = await AppDataSource.manager.findOneBy(Consulta, { id: consulta});
 
-    const consulta_proced_salva = await AppDataSource.manager.save(consulta_procedimento);
+    if(_consulta == null) {
+      return res.status(404).json({ erro: 'Consulta inexistente'})
+    }
 
-    return res.json(consulta_proced_salva);
+    if(procedimento.id == undefined) {
+      return res.status(404).json({ erro: 'Procedimento inexistente'})
+    }
+
+    const _procedimento = await AppDataSource.manager.findOneBy(Procedimento, { id: procedimento });
+
+    if(_procedimento == null) {
+      return res.status(404).json({ erro: 'Procedimento inexistente'})
+    }
+
+    consultaProcedimento.consulta = _consulta;
+    consultaProcedimento.procedimento = _procedimento;
+    consultaProcedimento.dente = dente;
+    consultaProcedimento.quantidade = quantidade;
+    consultaProcedimento.valor = valor;
+
+    const erros = await validate(consultaProcedimento);
+
+    if(erros.length > 0) {
+      return res.status(400).json(erros);
+    }
+
+    const consultaProcedimento_salvo = await AppDataSource.manager.save(consultaProcedimento);
+
+    return res.json(consultaProcedimento_salvo);
   }
 
-
-
-  public async destroy(req: Request, res: Response) {
+  public async destroy(req: Request, res: Response){
+  
+    
     const { cod } = req.params;
 
-    const consulta_procedimento = await AppDataSource.manager.findOneBy(ConsultaProcedimento, { id: cod });
+    const consultaProcedimento = await AppDataSource.manager.findOneBy(ConsultaProcedimento, { id: parseInt(cod) });
 
-    if (consulta_procedimento == null) {
-      return res.status(404).json({ erro: 'Consulta_Procedimento não encontrada!' });
+    if(consultaProcedimento == null) {
+      return res.status(404).json({ erro: 'Consulta Procedimento não encontrado!' });
     }
 
-    await AppDataSource.manager.delete(ConsultaProcedimento, consulta_procedimento);
+    await AppDataSource.manager.delete(ConsultaProcedimento, consultaProcedimento);
 
     return res.status(204).json();
   }
 
-
-  public async show(req: Request, res: Response) {
+  public async show(req: Request, res: Response){
+  
+    
     const { cod } = req.params;
 
-    const consulta_procedimento = await AppDataSource.manager.findOneBy(ConsultaProcedimento, { id: cod });
+    const consultaProcedimento = await AppDataSource.manager.findOneBy(ConsultaProcedimento, { id: parseInt(cod) });
 
-    if (consulta_procedimento == null) {
-      return res.status(404).json({ erro: 'Consulta_Procedimento não encontrada!' });
+    if(consultaProcedimento == null) {
+      return res.status(404).json({ erro: 'Consulta Procedimento não encontrado!' });
     }
 
-    return res.json(consulta_procedimento);
+    return res.json(consultaProcedimento);
   }
-
-
-
 }

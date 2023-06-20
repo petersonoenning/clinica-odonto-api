@@ -25,4 +25,10 @@ insert into despesas (id, descricao, data, data_efetivacao, valor, valor_pago, p
 insert into despesas (id, descricao, data, data_efetivacao, valor, valor_pago, pago) values (14, 'Abatz', '2022-11-23', '2022-10-22 12:07:55', 2563.48, 1859.31, false);
 insert into despesas (id, descricao, data, data_efetivacao, valor, valor_pago, pago) values (15, 'Jabbersphere', '2023-03-31', '2022-11-22 12:58:51', 1750.57, 1396.11, false);
 
+
+
+
 select * from despesas;
+
+insert into consulta values(1,'2023-01-01', 50.0, 4,1,1);
+

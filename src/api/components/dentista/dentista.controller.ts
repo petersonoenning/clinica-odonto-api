@@ -1,3 +1,4 @@
+import { validate } from 'class-validator';
 import { Request, Response } from 'express';
 import { AppDataSource } from '../../../config/database/mysql-datasource.config';
 import { Dentista } from './dentista.entity';
@@ -27,6 +28,12 @@ export class DentistaController {
     dent.especialidade = especialidade;
     dent.celular = celular;
 
+
+    const erros = await validate(dent);
+
+    if(erros.length > 0) {
+      return res.status(400).json(erros);
+    }
     const dentista_salvo = await AppDataSource.manager.save(dent);
 
     res.status(201).json({dentista_salvo});
@@ -36,10 +43,10 @@ export class DentistaController {
   //
   public async update(req: Request, res: Response){
   
-    const { codigo } = req.params;
+    const { cod } = req.params;
     
 
-    const dentista = await AppDataSource.manager.findOneBy(Dentista, { id: codigo });
+    const dentista = await AppDataSource.manager.findOneBy(Dentista, { id: parseInt(cod) });
 
     if(dentista == null) {
       return res.status(404).json({ erro: 'Dentista não encontrado!' });
@@ -53,6 +60,12 @@ export class DentistaController {
     dentista.especialidade = especialidade;
     dentista.celular = celular;
 
+
+    const erros = await validate(dentista);
+
+    if(erros.length > 0) {
+      return res.status(400).json(erros);
+    }
     const dentista_salvo = await AppDataSource.manager.save(dentista);
 
     return res.json(dentista_salvo);
@@ -61,9 +74,9 @@ export class DentistaController {
   public async destroy(req: Request, res: Response){
   
     
-    const { codigo } = req.params;
+    const { cod } = req.params;
 
-    const dentista = await AppDataSource.manager.findOneBy(Dentista, { id: codigo });
+    const dentista = await AppDataSource.manager.findOneBy(Dentista, { id: parseInt(cod) });
 
     if(dentista == null) {
       return res.status(404).json({ erro: 'Dentista não encontrado!' });
@@ -77,9 +90,9 @@ export class DentistaController {
   public async show(req: Request, res: Response){
   
     
-    const { codigo } = req.params;
+    const { cod } = req.params;
 
-    const dentista = await AppDataSource.manager.findOneBy(Dentista, { id: codigo });
+    const dentista = await AppDataSource.manager.findOneBy(Dentista, { id: parseInt(cod) });
 
     if(dentista == null) {
       return res.status(404).json({ erro: 'Dentista não encontrado!' });
