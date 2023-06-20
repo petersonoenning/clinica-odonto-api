@@ -19,7 +19,7 @@ export class RecebimentoController {
     receb.forma_recebimento = forma_recebimento;
     receb.status = status;
     receb.valor_total = valor_total;
-    receb.consulta_id = consulta_id;
+    receb.consulta = consulta_id;
 
     const _recebimento = await AppDataSource.manager.save(receb);
 
@@ -33,11 +33,10 @@ export class RecebimentoController {
     // const cod = req.params.codigo;
 
     // return res.json({ update: true , codigo_enviado: codigo});
-
-    const recebimento = await AppDataSource.manager.findOneBy(Recebimento, { id: codigo });
+    const recebimento = await AppDataSource.manager.findOneBy(Recebimento, { id: parseInt(codigo) });
 
     if(recebimento == null) {
-      return res.status(404).json({ erro: 'Recebimento não encontrado!' });
+      return res.status(404).json({ erro: 'Recebimento não encontradao!' });
     }
 
     let {data, forma_recebimento, status, valor_total, consulta_id} = req.body;
@@ -46,7 +45,7 @@ export class RecebimentoController {
     recebimento.forma_recebimento = forma_recebimento;
     recebimento.status = status;
     recebimento.valor_total = valor_total;
-    recebimento.consulta_id = consulta_id;
+    recebimento.consulta = consulta_id;
 
     const _recebimento = await AppDataSource.manager.save(recebimento);
 
@@ -58,7 +57,7 @@ export class RecebimentoController {
     
     const { codigo } = req.params;
 
-    const recebimento = await AppDataSource.manager.findOneBy(Recebimento, { id: codigo });
+    const recebimento = await AppDataSource.manager.findOneBy(Recebimento, { id: parseInt(codigo) });
 
     if(recebimento == null) {
       return res.status(404).json({ erro: 'Recebimento não encontrado!' });
@@ -74,9 +73,12 @@ export class RecebimentoController {
     
     const { codigo } = req.params;
 
-    const recebimento = await AppDataSource.manager.findOneBy(Recebimento, { id: codigo });
+    const recebimento = await AppDataSource.manager.findOneBy(Recebimento, { id: parseInt(codigo) });
 
     if(recebimento == null) {
+  
       return res.status(404).json({ erro: 'Recebimento não encontrado!' });
- }  }
+    }
+      return res.json(recebimento);
+  }
 }

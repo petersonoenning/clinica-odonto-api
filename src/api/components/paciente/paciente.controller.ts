@@ -1,3 +1,4 @@
+import { validate } from 'class-validator';
 import { Request, Response } from 'express';
 import { AppDataSource } from '../../../config/database/mysql-datasource.config';
 import { Paciente } from './paciente.entity';
@@ -23,6 +24,12 @@ export class PacienteController {
     pac.celular = celular;
     pac.email = email;
 
+    const erros = await validate(pac);
+
+    if(erros.length > 0) {
+      return res.status(400).json(erros);
+    }
+
     const _paciente = await AppDataSource.manager.save(pac);
 
     res.status(201).json(_paciente);
@@ -34,7 +41,9 @@ export class PacienteController {
 
     // return res.json({ update: true , codigo_enviado: codigo});
 
-    const paciente = await AppDataSource.manager.findOneBy(Paciente, { id: codigo });
+  
+    const paciente = await AppDataSource.manager.findOneBy(Paciente, {id: parseInt(codigo) });
+
 
     if(paciente == null) {
       return res.status(404).json({ erro: 'Paciente não encontrada!' });
@@ -59,10 +68,10 @@ export class PacienteController {
     
     const { codigo } = req.params;
 
-    const paciente = await AppDataSource.manager.findOneBy(Paciente, { id: codigo });
+    const paciente = await AppDataSource.manager.findOneBy(Paciente, { id: parseInt(codigo) });
 
     if(paciente == null) {
-      return res.status(404).json({ erro: 'Paciente não encontrada!' });
+      return res.status(404).json({ erro: 'Paciente não encontrado!' });
     }
 
     await AppDataSource.manager.delete(Paciente, paciente);
@@ -75,10 +84,10 @@ export class PacienteController {
     
     const { codigo } = req.params;
 
-    const paciente = await AppDataSource.manager.findOneBy(Paciente, { id: codigo });
+    const paciente = await AppDataSource.manager.findOneBy(Paciente, { id: parseInt(codigo) });
 
     if(paciente == null) {
-      return res.status(404).json({ erro: 'Paciente não encontrada!' });
+      return res.status(404).json({ erro: 'Paciente não encontrado!' });
     }
     return res.json(paciente);
   }

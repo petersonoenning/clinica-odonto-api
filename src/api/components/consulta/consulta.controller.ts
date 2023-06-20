@@ -7,19 +7,32 @@ export class ConsultaController {
 
     const consultas = await AppDataSource.manager.find(Consulta)
 
+      
+
     res.status(200).json({ dados: consultas, total: consultas });
   }
 
   public async create(req: Request, res: Response) {
 
-    let { data, valor_total, agenda_id, dentista_id, paciente_id} = req.body;
+    let { data, valor_total, agenda, dentista, paciente} = req.body;
+
+
 
     let cons = new Consulta();
     cons.data = data;
     cons.valor_total = valor_total;
-    cons.agenda_id = agenda_id;
-    cons.dentista_id = dentista_id;
-    cons.paciente_id = paciente_id;
+    cons.agenda.id = agenda;
+    cons.dentista = dentista;
+    cons.paciente = paciente;
+
+    if(dentista.id == undefined){
+      return res.status(404).json({erro: 'Categoria não existe!'})
+    }
+    const _dentista  = await AppDataSource.manager.findOneBy(Consulta, { id: dentista.id});
+    if(_dentista == null)
+    {
+      return res.status(404).json({erro: 'Categoria não existe!'})
+    }
 
     const _consulta = await AppDataSource.manager.save(cons);
 
@@ -33,7 +46,7 @@ export class ConsultaController {
 
     // return res.json({ update: true , codigo_enviado: codigo});
 
-    const consulta = await AppDataSource.manager.findOneBy(Consulta, { id: codigo });
+    const consulta = await AppDataSource.manager.findOneBy(Consulta, { id: parseInt(codigo) });
 
     if(consulta == null) {
       return res.status(404).json({ erro: 'Consulta não encontrada!' });
@@ -43,9 +56,9 @@ export class ConsultaController {
 
     consulta.data = data;
     consulta.valor_total = valor_total;
-    consulta.agenda_id = agenda_id;
-    consulta.dentista_id = dentista_id;
-    consulta.paciente_id = paciente_id;
+    consulta.agenda = agenda_id;
+    consulta.dentista = dentista_id;
+    consulta.paciente = paciente_id;
 
     const _consulta = await AppDataSource.manager.save(consulta);
 
@@ -57,7 +70,7 @@ export class ConsultaController {
     
     const { codigo } = req.params;
 
-    const consulta = await AppDataSource.manager.findOneBy(Consulta, { id: codigo });
+    const consulta = await AppDataSource.manager.findOneBy(Consulta, { id: parseInt(codigo) });
 
     if(consulta == null) {
       return res.status(404).json({ erro: 'Consulta não encontrada!' });
@@ -73,7 +86,7 @@ export class ConsultaController {
     
     const { codigo } = req.params;
 
-    const consulta = await AppDataSource.manager.findOneBy(Consulta, { id: codigo });
+    const consulta = await AppDataSource.manager.findOneBy(Consulta, { id: parseInt(codigo) });
 
     if(consulta == null) {
       return res.status(404).json({ erro: 'Consulta não encontrada!' });
