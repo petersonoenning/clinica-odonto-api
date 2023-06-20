@@ -1,13 +1,27 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { IsBoolean, IsDateString, IsInt, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Agenda } from '../agenda/agenda.entity';
+import { Dentista } from '../dentista/dentista.entity';
+import { Paciente } from '../paciente/paciente.entity';
 
 @Entity('consulta')
 export class Consulta {
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @IsNotEmpty({
+    message: 'A propriedade data não pode ser vazia'
+  })
+  @IsNumber({
+  })
   @Column()
   data!: Date;
 
+  @IsNotEmpty({
+    message: 'A propriedade não pode ser vazia'
+  })
+  @IsNumber({
+  })
   @Column({
     type: 'decimal', 
     transformer: {
@@ -17,14 +31,30 @@ export class Consulta {
   })
   valor_total!: number;
 
-  @Column()
-  agenda_id!: number;
+  @ManyToOne(() => Agenda)
+  @JoinColumn(
+    {
+      name: 'agenda_id',
+      referencedColumnName: 'id'
+    }
+  )
+  agenda!: Agenda;
 
-  @Column()
-  dentista_id!: number;
+  @ManyToOne(() => Dentista, {eager: true})
+  @JoinColumn(
+    {
+      name: 'dentista_id',
+      referencedColumnName: 'id'
+    }
+  )
+  dentista!: Dentista;
 
-  @Column()
-  paciente_id!: number;
-
-  
+  @ManyToOne(() => Paciente)
+  @JoinColumn(
+    {
+      name: 'paciente_id',
+      referencedColumnName: 'id'
+    }
+  )
+  paciente!: Paciente;
 }
