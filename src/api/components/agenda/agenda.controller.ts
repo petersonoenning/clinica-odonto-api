@@ -7,7 +7,7 @@ export class AgendaController {
 
     const agenda =  await AppDataSource.manager.find(Agenda)
 
-    res.status(200).json({ dados: agenda });
+    res.status(200).json({ dados: agenda, total: agenda.length});
   }
 
   public async create(req: Request, res: Response) {
@@ -30,4 +30,60 @@ export class AgendaController {
 
     res.status(201).json({agenda_salva});
   }
+
+
+  public async update(req: Request, res: Response) {
+    const { cod } = req.params;
+  
+    const agenda = await AppDataSource.manager.findOneBy(Agenda, { id: cod });
+  
+    if (agenda == null) {
+      return res.status(404).json({ erro: 'Agenda não encontrada!' });
+    }
+  
+    let { tipo, hora, data, dentista_id, paciente_id } = req.body;
+  
+    agenda.tipo = tipo;
+    agenda.hora = hora;
+    agenda.data = data;
+    agenda.dentista_id = dentista_id;
+    agenda.paciente_id = paciente_id;
+  
+    const agenda_salvo = await AppDataSource.manager.save(agenda);
+  
+    return res.json(agenda_salvo);
+  }
+  
+
+  public async destroy(req: Request, res: Response){
+  
+    
+    const cod = req.params.cod;
+
+    const agenda = await AppDataSource.manager.findOneBy(Agenda, { id: cod });
+
+    if(agenda == null) {
+      return res.status(404).json({ erro: 'Agenda não encontrada!' });
+    }
+
+    await AppDataSource.manager.delete(Agenda, agenda);
+
+    return res.status(204).json();
+  }
+
+
+  public async show(req: Request, res: Response){
+  
+    
+    const cod = req.params.cod;
+
+    const agenda = await AppDataSource.manager.findOneBy(Agenda, { id: cod });
+
+    if(agenda == null) {
+      return res.status(404).json({ erro: 'Agenda não encontrada!' });
+    }
+
+    return res.json(agenda);
+  }
 }
+
