@@ -23,21 +23,21 @@ export class ConsultaProcedimento {
   procedimento!: Procedimento;
 
   @IsNotEmpty({
-    message: 'A propriedade não pode ser vazia!'
+    message: 'A propriedade não pode estar vazia!'
   })
   @IsNumber()
   @Column()
   dente!: number;
 
   @IsNotEmpty({
-    message: 'A propriedade não pode ser vazia!'
+    message: 'A propriedade não pode estar vazia!'
   })
   @IsNumber()
   @Column()
   quantidade!: number;
 
   @IsNotEmpty({
-    message: 'A propriedade não pode ser vazia!'
+    message: 'A propriedade não pode estar vazia!'
   })
   @IsNumber()
   @Column({type: 'decimal', transformer: {

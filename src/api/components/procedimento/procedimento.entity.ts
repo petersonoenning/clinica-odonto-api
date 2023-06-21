@@ -6,14 +6,15 @@ export class Procedimento {
   @PrimaryGeneratedColumn()
   id!: number;
 
+  
   @IsNotEmpty({
-    message: "não pode ser vazio"
+    message: 'A propriedade não pode estar vazia!'
   })
   @Column()
   nome!: string;
 
-  @IsOptional({
-    message: "não pode ser vazio"
+  @IsNotEmpty({
+    message: 'A propriedade não pode estar vazia!'
   })
   @Column()
   materiais!: string;
@@ -27,3 +28,5 @@ export class Procedimento {
   }})
   valor!: number;
 }
+
+

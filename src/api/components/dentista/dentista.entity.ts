@@ -8,37 +8,37 @@ export class Dentista {
 
 
   @IsNotEmpty({
-    message: "não pode ser vazio"
+    message: 'A propriedade não pode estar vazia!'
   })
   @Column()
   cpf!: string;
 
   @IsNotEmpty({
-    message: "não pode ser vazio"
+    message: 'A propriedade não pode estar vazia!'
   })
   @Column()
   rg!: string;
 
   @IsNotEmpty({
-    message: "não pode ser vazio"
+    message: 'A propriedade não pode estar vazia!'
   })
   @Column()
   nome!: string;
   
   @IsNotEmpty({
-    message: "não pode ser vazio"
+    message: 'A propriedade não pode estar vazia!'
   })
   @Column()
   numero_registro!: string;
 
   @IsNotEmpty({
-    message: "não pode ser vazio"
+    message: 'A propriedade não pode estar vazia!'
   })
   @Column()
   especialidade!: string;
 
-  @IsOptional({
-    message: "não pode ser vazio"
+  @IsNotEmpty({
+    message: 'A propriedade não pode estar vazia!'
   })
   @Column()
   celular!: string;

@@ -16,8 +16,7 @@ export class ConsultaProcedimentoRoutes {
     this.router.post('/', this.controller.create);
     this.router.put('/:cod', this.controller.update);
     this.router.delete('/:cod', this.controller.destroy);
-    this.router.get('/:cod', this.controller.show); 
-    
+    this.router.get('/:cod', this.controller.show);
   }
 
   public routes(): Router {

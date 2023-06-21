@@ -11,11 +11,12 @@ export class ConsultaProcedimentoController {
     const consultaProcedimento =  await AppDataSource.manager.find(ConsultaProcedimento)
 
     res.status(200).json({ dados: consultaProcedimento, total: consultaProcedimento.length });
-  }
+  } 
 
   public async create(req: Request, res: Response) {
 
     let { consulta, procedimento, dente, quantidade, valor } = req.body;
+    
     
     if(consulta == undefined) {
       return res.status(404).json({ erro: 'Consulta inexistente'})
@@ -52,15 +53,13 @@ export class ConsultaProcedimentoController {
 
     const consultaProcedimento_salva = await AppDataSource.manager.save(cp);
 
-    res.status(201).json({consultaProcedimento_salva});
+    res.status(201).json(consultaProcedimento_salva);
   }
 
   public async update(req: Request, res: Response){
   
     const { cod } = req.params;
-    // const cod = req.params.codigo;
 
-    // return res.json({ update: true , codigo_enviado: codigo});
 
     const consultaProcedimento = await AppDataSource.manager.findOneBy(ConsultaProcedimento, { id: parseInt(cod) });
 
@@ -70,17 +69,17 @@ export class ConsultaProcedimentoController {
 
     let { consulta, procedimento, dente, quantidade, valor } = req.body;
 
-    if(consulta.id == undefined) {
+    if(consulta == undefined) {
       return res.status(404).json({ erro: 'Consulta inexistente'})
     }
 
-    const _consulta = await AppDataSource.manager.findOneBy(Consulta, { id: consulta});
+    const _consulta = await AppDataSource.manager.findOneBy(Consulta, { id: consulta });
 
     if(_consulta == null) {
       return res.status(404).json({ erro: 'Consulta inexistente'})
     }
 
-    if(procedimento.id == undefined) {
+    if(procedimento == undefined) {
       return res.status(404).json({ erro: 'Procedimento inexistente'})
     }
 
