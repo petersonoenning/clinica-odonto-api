@@ -10,13 +10,9 @@ export class ConsultaController {
 
     const consultas = await AppDataSource.manager.find(Consulta)
 
-<<<<<<< HEAD
       
 
     res.status(200).json({ dados: consultas, total: consultas.length });
-=======
-    res.status(200).json({ dados: consultas, total: consultas });
->>>>>>> ac59e2d87b265959c2678c5d39548530e02327b2
   }
 
   public async create(req: Request, res: Response) {
@@ -26,7 +22,6 @@ export class ConsultaController {
     let cons = new Consulta();
     cons.data = data;
     cons.valor_total = valor_total;
-<<<<<<< HEAD
     cons.agenda = req.body.agenda_id;
     cons.dentista = req.body.dentista_id;
     cons.paciente = req.body.paciente_id;
@@ -57,11 +52,6 @@ export class ConsultaController {
     {
       return res.status(404).json({erro: 'Paciente não existe!'})
     }
-=======
-    cons.agenda_id = agenda_id;
-    cons.dentista_id = dentista_id;
-    cons.paciente_id = paciente_id;
->>>>>>> ac59e2d87b265959c2678c5d39548530e02327b2
 
     const _consulta = await AppDataSource.manager.save(cons);
 
@@ -85,15 +75,9 @@ export class ConsultaController {
 
     consulta.data = data;
     consulta.valor_total = valor_total;
-<<<<<<< HEAD
     consulta.agenda = req.body.agenda_id;
     consulta.dentista = req.body.dentista_id;
     consulta.paciente = req.body.paciente_id;
-=======
-    consulta.agenda_id = agenda_id;
-    consulta.dentista_id = dentista_id;
-    consulta.paciente_id = paciente_id;
->>>>>>> ac59e2d87b265959c2678c5d39548530e02327b2
 
     const _consulta = await AppDataSource.manager.save(consulta);
 
