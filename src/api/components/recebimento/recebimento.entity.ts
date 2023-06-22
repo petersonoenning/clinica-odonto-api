@@ -2,7 +2,7 @@ import { IsBoolean, IsDateString, IsInt, IsNotEmpty, IsNumber, IsOptional } from
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Consulta } from '../consulta/consulta.entity';
 
-@Entity('recebimentos')
+@Entity('recebimento')
 export class Recebimento {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -43,7 +43,7 @@ export class Recebimento {
   })
   valor_total!: number;
 
-  @ManyToOne(() => Consulta)
+  @ManyToOne(() => Consulta, {eager: true})
   @JoinColumn(
     {
       name: 'consulta_id',

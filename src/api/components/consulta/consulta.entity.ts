@@ -31,7 +31,7 @@ export class Consulta {
   })
   valor_total!: number;
 
-  @ManyToOne(() => Agenda)
+  @ManyToOne(() => Agenda, {eager: true})
   @JoinColumn(
     {
       name: 'agenda_id',
@@ -49,7 +49,7 @@ export class Consulta {
   )
   dentista!: Dentista;
 
-  @ManyToOne(() => Paciente)
+  @ManyToOne(() => Paciente, {eager: true})
   @JoinColumn(
     {
       name: 'paciente_id',

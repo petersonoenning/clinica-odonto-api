@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import { AppDataSource } from '../../../config/database/mysql-datasource.config';
 import { Consulta} from './consulta.entity';
+import { Dentista } from '../dentista/dentista.entity';
+import { Agenda } from '../agenda/agenda.entity';
+import { Paciente } from '../paciente/paciente.entity';
 
 export class ConsultaController {
   public async list(req: Request, res: Response) {
@@ -9,29 +12,45 @@ export class ConsultaController {
 
       
 
-    res.status(200).json({ dados: consultas, total: consultas });
+    res.status(200).json({ dados: consultas, total: consultas.length });
   }
 
   public async create(req: Request, res: Response) {
 
-    let { data, valor_total, agenda, dentista, paciente} = req.body;
-
-
+    let { data, valor_total, agenda_id, dentista_id, paciente_id} = req.body;
 
     let cons = new Consulta();
     cons.data = data;
     cons.valor_total = valor_total;
-    cons.agenda.id = agenda;
-    cons.dentista = dentista;
-    cons.paciente = paciente;
+    cons.agenda = req.body.agenda_id;
+    cons.dentista = req.body.dentista_id;
+    cons.paciente = req.body.paciente_id;
 
-    if(dentista.id == undefined){
-      return res.status(404).json({erro: 'Categoria não existe!'})
+    if(cons.dentista == undefined){
+      return res.status(404).json({erro: 'Dentista não existe!'})
     }
-    const _dentista  = await AppDataSource.manager.findOneBy(Consulta, { id: dentista.id});
+    const _dentista  = await AppDataSource.manager.findOneBy(Dentista, { id: cons.dentista.id});
     if(_dentista == null)
     {
-      return res.status(404).json({erro: 'Categoria não existe!'})
+      return res.status(404).json({erro: 'Dentista não existe!'})
+    }
+
+    if(cons.agenda == undefined){
+      return res.status(404).json({erro: 'Agenda não existe!'})
+    }
+    const _agenda  = await AppDataSource.manager.findOneBy(Agenda, { id: cons.agenda.id});
+    if(_agenda == null)
+    {
+      return res.status(404).json({erro: 'Agenda não existe!'})
+    }
+
+    if(cons.paciente == undefined){
+      return res.status(404).json({erro: 'Paciente não existe!'})
+    }
+    const _paciente  = await AppDataSource.manager.findOneBy(Paciente, { id: cons.paciente.id});
+    if(_paciente == null)
+    {
+      return res.status(404).json({erro: 'Paciente não existe!'})
     }
 
     const _consulta = await AppDataSource.manager.save(cons);
@@ -56,9 +75,9 @@ export class ConsultaController {
 
     consulta.data = data;
     consulta.valor_total = valor_total;
-    consulta.agenda = agenda_id;
-    consulta.dentista = dentista_id;
-    consulta.paciente = paciente_id;
+    consulta.agenda = req.body.agenda_id;
+    consulta.dentista = req.body.dentista_id;
+    consulta.paciente = req.body.paciente_id;
 
     const _consulta = await AppDataSource.manager.save(consulta);
 

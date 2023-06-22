@@ -1,13 +1,14 @@
 import { Request, Response } from 'express';
 import { AppDataSource } from '../../../config/database/mysql-datasource.config';
 import { Recebimento } from './recebimento.entity';
+import { Consulta } from '../consulta/consulta.entity';
 
 export class RecebimentoController {
   public async list(req: Request, res: Response) {
 
     const recebimentos = await AppDataSource.manager.find(Recebimento)
 
-    res.status(200).json({ dados: recebimentos, total: recebimentos });
+    res.status(200).json({ dados: recebimentos, total: recebimentos.length });
   }
 
   public async create(req: Request, res: Response) {
@@ -18,8 +19,17 @@ export class RecebimentoController {
     receb.data = data;
     receb.forma_recebimento = forma_recebimento;
     receb.status = status;
-    receb.valor_total = valor_total;
-    receb.consulta = consulta_id;
+    receb.valor_total = req.body.valor_total;
+    receb.consulta = req.body.consulta_id;
+
+    if(receb.consulta == undefined){
+      return res.status(404).json({erro: 'Consulta não existe!'})
+    }
+    const _consulta  = await AppDataSource.manager.findOneBy(Consulta, { id: receb.consulta.id});
+    if(_consulta == null)
+    {
+      return res.status(404).json({erro: 'Consulta não existe!'})
+    }
 
     const _recebimento = await AppDataSource.manager.save(receb);
 
